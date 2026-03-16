@@ -8,7 +8,7 @@ while :; do \
   fi; \
   response=$(curl -s "$url"); \
   echo "$response" | grep -oP '"downloadUrl"\s*:\s*"\K[^"]+' | while read -r fileurl; do \
-    relpath=$(echo "$fileurl" | sed 's#http://10.10.12.27:8081/repository/maven-public/##'); \
+    relpath=$(echo "$fileurl" | sed 's#http://xx.xx.xx.xx:8081/repository/maven-public/##'); \
     mkdir -p "$(dirname "$relpath")"; \
     wget -q -O "$relpath" "$fileurl"; \
     echo "Downloaded: $relpath"; \
