@@ -1,0 +1,18 @@
+mkdir -p maven-public-download && cd maven-public-download && \
+continuationToken="" && \
+while :; do \
+  if [ -z "$continuationToken" ]; then \
+    url="http://xx.xx.xx.xx:8081/service/rest/v1/assets?repository=maven-public"; \
+  else \
+    url="http://xx.xx.xx.xx:8081/service/rest/v1/assets?repository=maven-public&continuationToken=$continuationToken"; \
+  fi; \
+  response=$(curl -s "$url"); \
+  echo "$response" | grep -oP '"downloadUrl"\s*:\s*"\K[^"]+' | while read -r fileurl; do \
+    relpath=$(echo "$fileurl" | sed 's#http://10.10.12.27:8081/repository/maven-public/##'); \
+    mkdir -p "$(dirname "$relpath")"; \
+    wget -q -O "$relpath" "$fileurl"; \
+    echo "Downloaded: $relpath"; \
+  done; \
+  continuationToken=$(echo "$response" | grep -oP '"continuationToken"\s*:\s*"\K[^"]*'); \
+  [ -z "$continuationToken" ] && break; \
+done
